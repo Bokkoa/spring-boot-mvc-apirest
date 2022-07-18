@@ -25,8 +25,10 @@ public class Client implements Serializable{
 
     // we can use @Column decorator when we want to change
     // the column name or another properties
+    @Column(nullable = false)
     private String name;
     private String lastName;
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(name = "created_at")
