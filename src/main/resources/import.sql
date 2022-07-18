@@ -1,0 +1,9 @@
+INSERT INTO clients (name, last_name, email, created_at) VALUES('Okamy', 'Ansuz', 'okamy@example.com', '2022-11-30');
+INSERT INTO clients (name, last_name, email, created_at) VALUES('Burrito', 'Ansuz', 'burrito@example.com', '2022-11-12');
+INSERT INTO clients (name, last_name, email, created_at) VALUES('Mitsu', 'Ansuz', 'mitsu@example.com', '2022-11-30');
+INSERT INTO clients (name, last_name, email, created_at) VALUES('Nina', 'Ansuz', 'nina@example.com', '2022-11-30');
+INSERT INTO clients (name, last_name, email, created_at) VALUES('Chibi', 'Ansuz', 'chibi@example.com', '2022-11-30');
+INSERT INTO clients (name, last_name, email, created_at) VALUES('Manteco', 'Ansuz', 'manteco@example.com', '2022-11-30');
+INSERT INTO clients (name, last_name, email, created_at) VALUES('Kira', 'Ansuz', 'kira@example.com', '2022-11-30');
+INSERT INTO clients (name, last_name, email, created_at) VALUES('Mane', 'Ansuz', 'mane@example.com', '2022-11-30');
+INSERT INTO clients (name, last_name, email, created_at) VALUES('Ginger', 'Ansuz', 'ginger@example.com', '2022-11-30');
