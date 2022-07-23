@@ -3,6 +3,8 @@ package bokkoa.backend.apirest.apirest.models.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +17,18 @@ public class ClientServiceImpl implements IClientService {
     // DIY
     @Autowired
     private IClientDao clientDao;
+
     @Override
     @Transactional( readOnly = true)
     public List<Client> findAll() {
         // casting for return
         return (List<Client>)clientDao.findAll();
+    }
+
+    @Override
+    @Transactional( readOnly = true)
+    public Page<Client> findAll(Pageable pageable) {
+        return clientDao.findAll(pageable);
     }
     
     @Override
@@ -38,5 +47,7 @@ public class ClientServiceImpl implements IClientService {
     public void delete(Long id) {
         clientDao.deleteById(id);        
     }
+
+ 
     
 }

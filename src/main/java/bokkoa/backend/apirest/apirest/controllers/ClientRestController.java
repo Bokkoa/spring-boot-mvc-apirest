@@ -1,14 +1,20 @@
 package bokkoa.backend.apirest.apirest.controllers;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +40,13 @@ public class ClientRestController {
     @GetMapping("/clients")
     public List<Client> index(){
         return clientService.findAll();
+    }
+
+    @GetMapping("/clients/page/{page}")
+    public Page<Client> index(@PathVariable Integer page ){
+
+        Pageable pageable = PageRequest.of(page, 10);
+        return clientService.findAll( pageable );
     }
 
     @GetMapping("/clients/{id}")
@@ -63,10 +76,32 @@ public class ClientRestController {
     }
 
     @PostMapping("/clients")
-    public ResponseEntity<?> create(@RequestBody Client client){
+    // @valid uses the decorators on entities
+    public ResponseEntity<?> create(@Valid @RequestBody Client client, BindingResult result){  
 
         Client newClient = null;
         Map<String, Object> response = new HashMap<>();
+
+        if( result.hasErrors()){
+         
+            // TRADITIONAL
+            // List<String> errors = new ArrayList<>();
+            // for (FieldError err : result.getFieldErrors()){
+            //     errors.add(err.getDefaultMessage());
+            // }
+            // response.put("errors", errors);
+            // return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+
+            // FUNCTIONAL
+            List<String> errors = result.getFieldErrors()
+                                    .stream()
+                                    .map( err ->  "Field: " + err.getField() + ' ' + err.getDefaultMessage() )
+                                    .collect(Collectors.toList());
+
+            response.put("errors", errors);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+        
         try{
             newClient = clientService.save(client);
         }catch(DataAccessException err){
@@ -82,11 +117,22 @@ public class ClientRestController {
 
 
     @PutMapping("/clients/{id}")
-    public ResponseEntity<?> update(@RequestBody Client client,  @PathVariable Long id){
+    public ResponseEntity<?> update(@Valid @RequestBody Client client, BindingResult result, @PathVariable Long id){
 
         Client currentClient = clientService.findById(id);
         Map<String, Object> response = new HashMap<>();
         Client clientUpdated = null;
+
+        if( result.hasErrors()){
+            // FUNCTIONAL
+            List<String> errors = result.getFieldErrors()
+                                    .stream()
+                                    .map( err ->  "Field: " + err.getField() + ' ' + err.getDefaultMessage() )
+                                    .collect(Collectors.toList());
+
+            response.put("errors", errors);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+        }
 
         if(currentClient == null){
             response.put("message", "Can't update the client with ID:".concat(id.toString().concat(" does not exists in db")));

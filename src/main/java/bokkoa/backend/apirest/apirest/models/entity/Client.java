@@ -12,6 +12,9 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 
 // Creating class for CLIENT DB TABLE
@@ -25,10 +28,17 @@ public class Client implements Serializable{
 
     // we can use @Column decorator when we want to change
     // the column name or another properties
+    @NotEmpty( message = " can't be empty :(")
+    @Size(min = 4, max = 12, message="the size must be bewteen 4 to 12 letters")
     @Column(nullable = false)
     private String name;
+
+    @NotEmpty( message = " can't be empty :(")
     private String lastName;
+    
     @Column(nullable = false, unique = true)
+    @NotEmpty( message = " can't be empty :(")
+    @Email( message = "invalid email format")
     private String email;
 
     @Column(name = "created_at")
