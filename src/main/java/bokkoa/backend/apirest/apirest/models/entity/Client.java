@@ -8,12 +8,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.PrePersist;
+// import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 
@@ -41,15 +42,25 @@ public class Client implements Serializable{
     @Email( message = "invalid email format")
     private String email;
 
+    @NotNull(message = "cant be null")
     @Column(name = "created_at")
     @Temporal(TemporalType.DATE)  // Casting to DATE mysql format
     private Date createdAt;
-    
-    @PrePersist
-    public void prePersist(){
-        createdAt = new Date();
-    }
 
+
+    private String photo;
+    
+    // @PrePersist
+    // public void prePersist(){
+    //     createdAt = new Date();
+    // }
+
+    public String getPhoto() {
+        return photo;
+    }
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
     public Long getId() {
         return id;
     }
