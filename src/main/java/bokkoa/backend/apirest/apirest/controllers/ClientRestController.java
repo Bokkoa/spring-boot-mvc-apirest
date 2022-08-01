@@ -1,15 +1,10 @@
 package bokkoa.backend.apirest.apirest.controllers;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -18,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import bokkoa.backend.apirest.apirest.models.entity.Client;
 import bokkoa.backend.apirest.apirest.models.services.IClientService;
+import bokkoa.backend.apirest.apirest.models.services.IUploadFileService;
 
 @CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
@@ -50,6 +45,9 @@ public class ClientRestController {
     
     @Autowired
     private IClientService clientService;
+
+    @Autowired
+    private IUploadFileService uploadService;
 
     private final Logger log = LoggerFactory.getLogger(ClientRestController.class);
 
@@ -179,21 +177,13 @@ public class ClientRestController {
 
         Map<String, Object> response = new HashMap<>();
         
-        
         try{
             Client client = clientService.findById(id);
             String previousPhotoName = client.getPhoto();
 
-            if(previousPhotoName != null && previousPhotoName.length() > 0){
-               Path pathPreviousPhoto = Paths.get("uploads").resolve(previousPhotoName).toAbsolutePath();
-               File previousPhotoFile = pathPreviousPhoto.toFile();
-
-               if(previousPhotoFile.exists() && previousPhotoFile.canRead()){
-                   previousPhotoFile.delete();
-               }
-            }
-
+            uploadService.delete(previousPhotoName);
             clientService.delete(id);
+
         }catch(DataAccessException err){
             response.put("message", "DB query error");
             response.put("error", err.getMessage().concat(": ").concat(err.getMostSpecificCause().getMessage()));
@@ -211,27 +201,20 @@ public class ClientRestController {
         Client client = clientService.findById(id);
 
         if(!file.isEmpty()){
-            String fileName = UUID.randomUUID().toString() + '_' + file.getOriginalFilename().replace(" ", "");
-            Path filePath = Paths.get("uploads").resolve(fileName).toAbsolutePath();
-            log.info(filePath.toString());
+            
+            String fileName = null;
+
             try{
-                Files.copy(file.getInputStream(), filePath);
+                fileName = uploadService.copy(file);
             }catch( IOException err){
                 response.put("message", "Error at uploading the image ");
                 response.put("error", err.getMessage().concat(": ").concat(err.getCause().getMessage()));
                 return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-             }
+            }
 
-             String previousPhotoName = client.getPhoto();
+            String previousPhotoName = client.getPhoto();
 
-             if(previousPhotoName != null && previousPhotoName.length() > 0){
-                Path pathPreviousPhoto = Paths.get("uploads").resolve(previousPhotoName).toAbsolutePath();
-                File previousPhotoFile = pathPreviousPhoto.toFile();
-
-                if(previousPhotoFile.exists() && previousPhotoFile.canRead()){
-                    previousPhotoFile.delete();
-                }
-             }
+            uploadService.delete(previousPhotoName);
 
             client.setPhoto(fileName);
             clientService.save(client);
@@ -245,20 +228,14 @@ public class ClientRestController {
     @GetMapping("/uploads/img/{photoName:.+}")
     public ResponseEntity<Resource> seePhoto(@PathVariable String photoName){
 
-        Path filePath = Paths.get("uploads").resolve(photoName).toAbsolutePath();
-        log.info(filePath.toString());
         Resource resource = null;
-
-        try{
-            resource = new UrlResource(filePath.toUri());
-        }catch(MalformedURLException err ){
-            err.printStackTrace();
+        
+        try {
+            resource = uploadService.load(photoName);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
-
-
-        if(!resource.exists() && !resource.isReadable()){
-            throw new RuntimeException("Can't load the image " + photoName);
-        }
+     
 
         HttpHeaders header = new HttpHeaders();
 
