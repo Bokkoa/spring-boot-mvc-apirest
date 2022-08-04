@@ -5,9 +5,12 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 // import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -16,6 +19,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 // Creating class for CLIENT DB TABLE
@@ -49,6 +54,12 @@ public class Client implements Serializable{
 
 
     private String photo;
+
+    @NotNull(message = "Region can't be null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Region region;
     
     // @PrePersist
     // public void prePersist(){
@@ -90,6 +101,12 @@ public class Client implements Serializable{
     }
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+    public Region getRegion() {
+        return region;
+    }
+    public void setRegion(Region region) {
+        this.region = region;
     }
 
     // From serializable interface

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import bokkoa.backend.apirest.apirest.models.dao.IClientDao;
 import bokkoa.backend.apirest.apirest.models.entity.Client;
+import bokkoa.backend.apirest.apirest.models.entity.Region;
 
 @Service
 public class ClientServiceImpl implements IClientService {
@@ -46,6 +47,12 @@ public class ClientServiceImpl implements IClientService {
     @Transactional
     public void delete(Long id) {
         clientDao.deleteById(id);        
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public List<Region> findAllRegions() {
+        return clientDao.findAllRegions();
     }
 
  

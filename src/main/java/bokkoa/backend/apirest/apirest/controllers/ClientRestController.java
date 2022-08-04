@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import bokkoa.backend.apirest.apirest.models.entity.Client;
+import bokkoa.backend.apirest.apirest.models.entity.Region;
 import bokkoa.backend.apirest.apirest.models.services.IClientService;
 import bokkoa.backend.apirest.apirest.models.services.IUploadFileService;
 
@@ -158,6 +159,7 @@ public class ClientRestController {
             currentClient.setEmail(client.getEmail());
             currentClient.setName(client.getName());
             currentClient.setCreatedAt(client.getCreatedAt());
+            currentClient.setRegion(client.getRegion());
             clientUpdated = clientService.save(currentClient);
         }catch(DataAccessException err){
             response.put("message", "DB query error");
@@ -241,6 +243,11 @@ public class ClientRestController {
 
         header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"");
         return new ResponseEntity<Resource>(resource, header, HttpStatus.OK);
+    }
+
+    @GetMapping("/clients/regions")
+    public List<Region> listRegions(){
+        return clientService.findAllRegions();
     }
 
 }
