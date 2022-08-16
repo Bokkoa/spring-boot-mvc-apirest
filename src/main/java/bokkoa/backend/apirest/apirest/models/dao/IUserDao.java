@@ -11,12 +11,8 @@ public interface IUserDao extends CrudRepository<User, Long> {
     // select user from User where user.username=?
     public User findByUsername(String username);
 
-    // select user from User where user.username=? AND user.email = ?
-    public User findByUsernameAndEmail(String username, String email);
-
     // another way with explicit implementation, 1 is the first param
     @Query("select u from User u where u.username=?1")
     public User findByUsername2(String username);
-
 
 }
