@@ -18,7 +18,7 @@ import bokkoa.backend.apirest.apirest.models.dao.IUserDao;
 import bokkoa.backend.apirest.apirest.models.entity.User;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService implements UserDetailsService, IUserService {
     
     private Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -48,6 +48,12 @@ public class UserService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(), user.getPassword(), user.getEnabled(), true, true, true, authorities);
         
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User findByUsername(String username) {
+        return userDao.findByUsername(username);
     }
     
 }

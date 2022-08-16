@@ -17,13 +17,12 @@ INSERT INTO clients (region_id, name, last_name, email, created_at) VALUES(7, 'M
 INSERT INTO clients (region_id, name, last_name, email, created_at) VALUES(1, 'Ginger', 'Ansuz', 'ginger@example.com', '2022-11-30');
 
 
-
-INSERT INTO users (username, password, enabled) VALUES ("konejo", '', 1);
-INSERT INTO users (username, password, enabled) VALUES ("blaz", '', 1);
+INSERT INTO users (username, password, enabled, name, last_name, email) VALUES ("konejo", '', 1, "Ansuz", "Berkana", "ansuz@berkana.com");
+INSERT INTO users (username, password, enabled, name, last_name, email) VALUES ("blaz", '', 1, "Ansuz", "Berkana", "ansuz@berkana.es");
 
 INSERT INTO roles (name) VALUES ('ROLE_USER')
 INSERT INTO roles (name) VALUES ('ROLE_ADMIN')
 
-INSERT INTO user_roles (user_id, role_id) VALUES (1, 1);
-INSERT INTO user_roles (user_id, role_id) VALUES (2, 2);
-INSERT INTO user_roles (user_id, role_id) VALUES (2, 1);
+INSERT INTO users_roles (user_id, role_id) VALUES (1, 1);
+INSERT INTO users_roles (user_id, role_id) VALUES (2, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (2, 1);

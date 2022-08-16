@@ -1,5 +1,7 @@
 package bokkoa.backend.apirest.apirest.auth;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +13,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
@@ -26,6 +29,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Qualifier("authenticationManager")
     private AuthenticationManager authenticationManager;
 
+
+    @Autowired
+    private AditionalTokenInfo aditionalTokenInfo;
 
     // configuring routes and headers
     @Override
@@ -50,9 +56,15 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     // The endpoint
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+
+        // adding new values configuration with token enhancer chain
+        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(aditionalTokenInfo, accessTokenConverter()));
+
         endpoints.authenticationManager(authenticationManager)
                     .tokenStore(tokenStore())
-                    .accessTokenConverter((accessTokenConverter()));
+                    .accessTokenConverter((accessTokenConverter()))
+                    .tokenEnhancer(tokenEnhancerChain); // adding the chain for info
     }
 
 
@@ -67,6 +79,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
         JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
+        jwtAccessTokenConverter.setSigningKey(JwtConfig.RSA_PRIVATE);
+        jwtAccessTokenConverter.setVerifierKey(JwtConfig.RSA_PUBLIC);
         return jwtAccessTokenConverter;
     }
 
