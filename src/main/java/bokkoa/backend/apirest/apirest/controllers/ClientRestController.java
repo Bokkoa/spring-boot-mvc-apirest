@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -64,6 +65,7 @@ public class ClientRestController {
         return clientService.findAll( pageable );
     }
 
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/clients/{id}")
     @ResponseStatus(HttpStatus.OK)  // REDUNDANT 
     public ResponseEntity<?> show(@PathVariable Long id){
@@ -90,6 +92,7 @@ public class ClientRestController {
 
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping("/clients")
     // @valid uses the decorators on entities
     public ResponseEntity<?> create(@Valid @RequestBody Client client, BindingResult result){  
@@ -130,7 +133,7 @@ public class ClientRestController {
         return new ResponseEntity<Map<String, Object>>( response, HttpStatus.CREATED);
     }
 
-
+    @Secured("ROLE_ADMIN")
     @PutMapping("/clients/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Client client, BindingResult result, @PathVariable Long id){
 
@@ -173,7 +176,7 @@ public class ClientRestController {
 
     }
 
-
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/clients/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
 
@@ -195,7 +198,8 @@ public class ClientRestController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 
-
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @PostMapping("/clients/upload")
     public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id ){
 
         Map<String, Object> response = new HashMap<>();
@@ -244,7 +248,8 @@ public class ClientRestController {
         header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"");
         return new ResponseEntity<Resource>(resource, header, HttpStatus.OK);
     }
-
+    
+    @Secured("ROLE_ADMIN")
     @GetMapping("/clients/regions")
     public List<Region> listRegions(){
         return clientService.findAllRegions();
