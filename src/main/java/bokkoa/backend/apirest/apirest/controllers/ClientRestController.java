@@ -65,7 +65,7 @@ public class ClientRestController {
         return clientService.findAll( pageable );
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    // @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/clients/{id}")
     @ResponseStatus(HttpStatus.OK)  // REDUNDANT 
     public ResponseEntity<?> show(@PathVariable Long id){
