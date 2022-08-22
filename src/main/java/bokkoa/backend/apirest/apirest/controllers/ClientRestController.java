@@ -40,7 +40,7 @@ import bokkoa.backend.apirest.apirest.models.entity.Region;
 import bokkoa.backend.apirest.apirest.models.services.IClientService;
 import bokkoa.backend.apirest.apirest.models.services.IUploadFileService;
 
-@CrossOrigin(origins = {"http://localhost:4200"})
+@CrossOrigin(origins = {"http://localhost:4200", "http://productionexample.com"})
 @RestController
 @RequestMapping("/api")
 public class ClientRestController {
@@ -65,7 +65,7 @@ public class ClientRestController {
         return clientService.findAll( pageable );
     }
 
-    // @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/clients/{id}")
     @ResponseStatus(HttpStatus.OK)  // REDUNDANT 
     public ResponseEntity<?> show(@PathVariable Long id){

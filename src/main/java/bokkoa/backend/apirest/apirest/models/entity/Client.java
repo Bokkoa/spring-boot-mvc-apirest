@@ -65,7 +65,7 @@ public class Client implements Serializable{
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Region region;
     
-    @JsonIgnoreProperties({"client", "hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties(value = {"client", "hibernateLazyInitializer", "handler"}, allowSetters = true )
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "client", cascade = CascadeType.ALL)
     private List<Bill> bills;
 

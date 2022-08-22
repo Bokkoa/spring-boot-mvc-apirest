@@ -40,7 +40,7 @@ public class Bill implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")  // only is used when the fk name is different
-    @JsonIgnoreProperties({"bills", "hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties(value = {"bills", "hibernateLazyInitializer", "handler"}, allowSetters = true )
     private Client client;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

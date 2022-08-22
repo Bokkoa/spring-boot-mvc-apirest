@@ -24,8 +24,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
             .antMatchers(HttpMethod.GET, "/api/clients", "/api/clients/page/**", "/api/uploads/img/**", "/images/**").permitAll()
-            .antMatchers("/api/clients/{id}").permitAll()
-            .antMatchers("/api/bills/**").permitAll()
             // this is also used in annotations
             // .antMatchers(HttpMethod.GET, "/api/clients/{id}").hasAnyRole("USER", "ADMIN") // they dont need the role prefix
             // .antMatchers(HttpMethod.POST, "/api/clients/upload").hasAnyRole("USER", "ADMIN") // they dont need the role prefix
@@ -39,7 +37,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://productionexample.com"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
